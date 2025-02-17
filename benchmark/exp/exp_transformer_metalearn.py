@@ -1,7 +1,7 @@
 import time
 import yaml
 import sys
-sys.path.append('/home/ubuntu/ForecastPFN/academic_comparison/')
+sys.path.append('/home/ubuntu/ForecastPFN/academic_comparison/') # Change /home/ubuntu/ path according to local environment
 
 import os
 import time
@@ -20,8 +20,8 @@ from transformer_models.models import FEDformer, Autoformer, Informer, Transform
 from utils.tools import EarlyStopping, TimeBudget, adjust_learning_rate, visual
 from utils.metrics import metric
 
-sys.path.append('/home/ubuntu/ForecastPFN/src/')
-sys.path.append('/home/ubuntu/ForecastPFN/src/training/')
+sys.path.append('/home/ubuntu/ForecastPFN/src/') # Change /home/ubuntu/ path according to local environment
+sys.path.append('/home/ubuntu/ForecastPFN/src/training/') # Change /home/ubuntu/ path according to local environment
 from training.create_train_test_df import create_train_test_df
 import tensorflow as tf
 

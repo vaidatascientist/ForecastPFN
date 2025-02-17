@@ -88,10 +88,10 @@ class Exp_ForecastPFN(Exp_Basic):
                 target = tf.pad(x_mark.cpu(), [[100-x.shape[0], 0], [0, 0]])
                 history = tf.pad(history, [[100-x.shape[0], 0], [0, 0]])
 
-            history = tf.repeat(tf.expand_dims(history, axis=0), [
-                                horizon], axis=0)[:, :, 0]
-            ts = tf.repeat(tf.expand_dims(
-                target, axis=0), [horizon], axis=0)
+            # Ensure 'history' is cast to float32
+            history = tf.cast(history, tf.float32)
+            history = tf.repeat(tf.expand_dims(history, axis=0), [horizon], axis=0)[:, :, 0]
+            ts = tf.repeat(tf.expand_dims(target, axis=0), [horizon], axis=0)
 
         else:
             ts = tf.convert_to_tensor(x_mark.unsqueeze(0).repeat(
@@ -133,8 +133,8 @@ class Exp_ForecastPFN(Exp_Basic):
             list(test_data.data_stamp_original['date']))
         if test:
             print('loading model')
-            pretrained = tf.keras.models.load_model(
-                self.args.model_path, custom_objects={'smape': smape})
+            pretrained = tf.saved_model.load(
+                self.args.model_path)
 
         preds = []
         trues = []
@@ -163,5 +163,10 @@ class Exp_ForecastPFN(Exp_Basic):
         self.test_timer.total_time = timer
         print('total time:')
         print(timer)
+        
+        preds_all = np.concatenate([np.array(p).reshape(-1) for p in preds])
+        trues_all = np.concatenate([np.array(t).reshape(-1) for t in trues])
+        smape_value = smape(trues_all, preds_all)
+        print("SMAPE:", smape_value.numpy())
 
         return self._save_test_data(setting, preds, trues)
